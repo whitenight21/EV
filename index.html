@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>EV vs ICE – Cost & Refuel Comparison</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>EV vs ICE – Cost Calculator</title>
     <style>
         :root {
             --primary:    #2563eb;
@@ -27,459 +27,406 @@
             background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
             color: var(--dark);
             margin: 0;
-            padding: 2rem 1rem;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
+            padding: 12px;
+            font-size: 15px;
+            line-height: 1.45;
         }
 
         h1 {
-            color: var(--primary-d);
+            font-size: 1.65rem;
+            margin: 0.8em 0 1.2em;
             text-align: center;
-            margin: 0.8em 0 1.5em;
-            font-weight: 800;
-            letter-spacing: -0.025em;
+            color: var(--primary-d);
         }
 
         .card {
             background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            padding: 2rem;
-            margin-bottom: 2.5rem;
-            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+            padding: 1.2rem 1rem;
+            margin-bottom: 1.8rem;
         }
 
         .section-title {
             background: var(--primary);
             color: white;
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin: 2rem 0 1.2rem;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin: 1.4rem 0 0.9rem;
+            font-size: 1.15rem;
             font-weight: 700;
         }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 1rem 0;
-            font-size: 0.98rem;
+            border-collapse: collapse;
+            margin: 0.8rem 0;
+            font-size: 0.94rem;
         }
 
         th, td {
-            padding: 12px 14px;
-            border: 1px solid var(--border);
+            padding: 9px 10px;
+            border: 1px solid #dfe6ed;
             text-align: left;
         }
 
         th {
-            background: #eff6ff;
+            background: #f0f7ff;
             color: var(--primary-d);
             font-weight: 600;
-        }
-
-        tr:nth-child(even) {
-            background: #f8fafc;
+            font-size: 0.92rem;
         }
 
         input[type="number"] {
-            width: 110px;
-            padding: 8px 10px;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.15s ease;
+            width: 92px;
+            padding: 6px 8px;
+            font-size: 0.96rem;
+            border: 1.5px solid #c3d4e8;
+            border-radius: 6px;
         }
 
         input[type="number"]:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
         }
 
-        .result {
-            font-weight: 700;
-            color: var(--danger);
-        }
-
-        .savings {
-            font-weight: 700;
-            color: var(--success);
-        }
-
-        .simulations {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 2rem;
-        }
+        .result { color: var(--danger); font-weight: 700; }
+        .savings { color: var(--success); font-weight: 700; }
 
         .km-input {
             text-align: center;
-            margin: 1.8rem 0;
-            font-size: 1.2rem;
+            margin: 1.3rem 0;
             font-weight: 600;
             color: var(--primary-d);
         }
 
         .km-input input {
-            font-size: 1.25rem;
-            width: 140px;
+            width: 110px;
+            font-size: 1.1rem;
+        }
+
+        .simulations {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
         }
 
         .price-label {
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             color: var(--gray);
-            margin-bottom: 4px;
-            display: block;
+            margin-bottom: 3px;
         }
 
         .highlight-ev {
-            background: var(--ev-bg) !important;
-            font-weight: 500;
+            background: var(--ev-bg);
         }
 
         footer {
             text-align: center;
-            color: var(--gray);
-            margin-top: 4rem;
-            font-size: 0.95rem;
+            color: #6b7280;
+            font-size: 0.84rem;
+            margin: 2.5rem 0 1rem;
+        }
+
+        @media (min-width: 480px) {
+            body { padding: 1.5rem; font-size: 16px; }
+            .card { padding: 1.6rem; }
+            h1 { font-size: 2rem; }
+            table { font-size: 1rem; }
+            input[type="number"] { width: 105px; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<h1>⚡ EV vs ICE Calculator</h1>
 
-    <h1>⚡ EV vs Diesel vs Petrol – Cost & Refueling Calculator</h1>
+<div class="card">
+    <div class="section-title">Monthly Costs</div>
 
-    <div class="card">
-        <div class="section-title">Monthly Cost Comparison</div>
+    <div class="km-input">
+        <label for="monthlyKm">km/month:</label>
+        <input type="number" id="monthlyKm" value="500" min="100" max="10000" step="100">
+    </div>
 
-        <div class="km-input">
-            <label for="monthlyKm">Monthly distance:</label>
-            <input type="number" id="monthlyKm" value="500" min="100" max="10000" step="100"> km
+    <table>
+        <tr>
+            <th>Type</th>
+            <th>Cons.</th>
+            <th>€/unit</th>
+            <th>Need</th>
+            <th>Cost</th>
+        </tr>
+        <tr class="highlight-ev">
+            <td>Electric</td>
+            <td><input type="number" id="consEv" value="16" step="0.5"> kWh</td>
+            <td><input type="number" id="priceEv" value="0.39" step="0.01"> €</td>
+            <td><span id="needEv">80.0</span></td>
+            <td class="result"><span id="costEv">31.20</span> €</td>
+        </tr>
+        <tr>
+            <td>Diesel</td>
+            <td><input type="number" id="consDiesel" value="7" step="0.5"> l</td>
+            <td><input type="number" id="priceDieselMonthly" value="1.40" step="0.01"> €</td>
+            <td><span id="needDiesel">35.0</span></td>
+            <td class="result"><span id="costDiesel">49.00</span> €</td>
+        </tr>
+        <tr>
+            <td>Petrol</td>
+            <td><input type="number" id="consPetrol" value="8" step="0.5"> l</td>
+            <td><input type="number" id="pricePetrolMonthly" value="1.50" step="0.01"> €</td>
+            <td><span id="needPetrol">40.0</span></td>
+            <td class="result"><span id="costPetrol">60.00</span> €</td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align:right">Savings vs Diesel:</td>
+            <td class="savings"><span id="savingsDiesel">17.80</span> €</td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align:right">Savings vs Petrol:</td>
+            <td class="savings"><span id="savingsPetrol">28.80</span> €</td>
+        </tr>
+    </table>
+</div>
+
+<div class="card">
+    <div class="section-title">6h @ 6kW (eJoin)</div>
+    <table>
+        <tr><td>Added</td><td><strong><span id="added6h">36.0</span> kWh</strong></td></tr>
+        <tr><td>Cost</td><td class="result"><strong><span id="cost6h">10.44</span> €</strong></td></tr>
+        <tr><td>Range +</td><td><strong><span id="range6h">225</span> km</strong></td></tr>
+    </table>
+</div>
+
+<div class="card">
+    <div class="section-title">Simulation – Charge / Refuel</div>
+
+    <div class="simulations">
+
+        <div>
+            <div class="section-title" style="background:#1e40af;">Electric</div>
+            <table>
+                <tr><td>Battery</td><td>70 kWh</td></tr>
+                <tr><td>Cons.</td><td><input type="number" id="consEvSim" value="16" step="0.5"></td></tr>
+                <tr><td>Arrival %</td><td><input type="number" id="socEv" value="57" step="1"> %</td></tr>
+                <tr><td>Remaining</td><td><span id="remEv">39.9</span> kWh</td></tr>
+                <tr><td>Range now</td><td><span id="rangeNowEv">249</span> km</td></tr>
+                <tr><td>Charge</td><td><input type="number" id="addEv" value="40" step="5"> kWh</td></tr>
+                <tr><td>After</td><td><span id="afterEv">79.9</span> kWh</td></tr>
+                <tr><td>New %</td><td><span id="newSocEv">114</span> %</td></tr>
+                <tr><td>New range</td><td><span id="rangeAfterEv">499</span> km</td></tr>
+                <tr>
+                    <td><strong>Price</strong></td>
+                    <td>
+                        eJoin: <input type="number" id="priceEjoinRate" value="0.29" step="0.01"> → <span id="priceEjoin" class="result">11.60</span> €<br>
+                        ZSE:   <input type="number" id="priceZseRate" value="0.39" step="0.01"> → <span id="priceZse" class="result">15.60</span> €
+                    </td>
+                </tr>
+            </table>
         </div>
 
-        <table>
-            <tr>
-                <th>Powertrain</th>
-                <th>Consumption</th>
-                <th>Price per unit</th>
-                <th>Needed</th>
-                <th>Monthly cost</th>
-            </tr>
-            <tr class="highlight-ev">
-                <td>Electric (Leapmotor C10)</td>
-                <td><input type="number" id="consEv" value="16" min="8" max="35" step="0.5"> kWh/100 km</td>
-                <td><input type="number" id="priceEv" value="0.39" min="0.1" max="1" step="0.01"> €/kWh</td>
-                <td><span id="needEv">80.0</span> kWh</td>
-                <td class="result"><span id="costEv">31.20</span> €</td>
-            </tr>
-            <tr>
-                <td>Diesel (Peugeot 308)</td>
-                <td><input type="number" id="consDiesel" value="7" min="4" max="15" step="0.5"> l/100 km</td>
-                <td><input type="number" id="priceDieselMonthly" value="1.40" min="0.5" max="3" step="0.01"> €/l</td>
-                <td><span id="needDiesel">35.0</span> l</td>
-                <td class="result"><span id="costDiesel">49.00</span> €</td>
-            </tr>
-            <tr>
-                <td>Petrol (Peugeot 308)</td>
-                <td><input type="number" id="consPetrol" value="8" min="4" max="15" step="0.5"> l/100 km</td>
-                <td><input type="number" id="pricePetrolMonthly" value="1.50" min="0.5" max="3" step="0.01"> €/l</td>
-                <td><span id="needPetrol">40.0</span> l</td>
-                <td class="result"><span id="costPetrol">60.00</span> €</td>
-            </tr>
-            <tr>
-                <td colspan="4" style="text-align:right; font-weight:700;">Monthly savings – EV vs Diesel:</td>
-                <td class="savings"><span id="savingsDiesel">17.80</span> €</td>
-            </tr>
-            <tr>
-                <td colspan="4" style="text-align:right; font-weight:700;">Monthly savings – EV vs Petrol:</td>
-                <td class="savings"><span id="savingsPetrol">28.80</span> €</td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="card">
-        <div class="section-title">6 h AC Charging @ 6 kW (eJoin reference price)</div>
-        <table>
-            <tr><td>Added energy</td><td><strong><span id="added6h">36.0</span> kWh</strong></td></tr>
-            <tr><td>Cost</td><td class="result"><strong><span id="cost6h">10.44</span> €</strong></td></tr>
-            <tr><td>Estimated range added</td><td><strong><span id="range6h">225</span> km</strong></td></tr>
-        </table>
-    </div>
-
-    <div class="card">
-        <div class="section-title">Current Status & Refuel / Charge Simulation</div>
-
-        <div class="simulations">
-
-            <!-- EV -->
-            <div>
-                <div class="section-title" style="background:#1e40af;">Electric – Leapmotor C10</div>
-                <table>
-                    <tr><td>Battery capacity</td><td>70 kWh</td></tr>
-                    <tr><td>Consumption</td><td><input type="number" id="consEvSim" value="16" min="8" max="35" step="0.5"> kWh/100km</td></tr>
-                    <tr><td>Arrival SOC</td><td><input type="number" id="socEv" value="57" min="0" max="100" step="1"> %</td></tr>
-                    <tr><td>Remaining energy</td><td><span id="remEv">39.9</span> kWh</td></tr>
-                    <tr><td>Range remaining</td><td><span id="rangeNowEv">249</span> km</td></tr>
-                    <tr><td>Energy to charge</td><td><input type="number" id="addEv" value="40" min="5" max="80" step="5"> kWh</td></tr>
-                    <tr><td>Battery after charging</td><td><span id="afterEv">79.9</span> kWh</td></tr>
-                    <tr><td>New SOC</td><td><span id="newSocEv">114 %</span> (theoretical)</td></tr>
-                    <tr><td>Points added</td><td><span id="pointsEv">57 %p</span></td></tr>
-                    <tr><td>New range</td><td><span id="rangeAfterEv">499</span> km</td></tr>
-                    <tr class="price-row">
-                        <td><strong>Session price</strong></td>
-                        <td>
-                            <div class="price-label">eJoin AC:</div>
-                            <input type="number" id="priceEjoinRate" value="0.29" min="0.1" max="1" step="0.01"> €/kWh  
-                            → <span id="priceEjoin" class="result">11.60 €</span><br>
-                            <div class="price-label">ZSE DC:</div>
-                            <input type="number" id="priceZseRate" value="0.39" min="0.1" max="1" step="0.01"> €/kWh  
-                            → <span id="priceZse" class="result">15.60 €</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Diesel -->
-            <div>
-                <div class="section-title" style="background:#7c3aed;">Diesel – Peugeot 308</div>
-                <table>
-                    <tr><td>Tank capacity</td><td>50 l</td></tr>
-                    <tr><td>Consumption</td><td><input type="number" id="consDieselSim" value="7" min="4" max="15" step="0.5"> l/100km</td></tr>
-                    <tr><td>Arrival level</td><td><input type="number" id="socDiesel" value="57" min="0" max="100" step="1"> %</td></tr>
-                    <tr><td>Remaining fuel</td><td><span id="remDiesel">28.5</span> l</td></tr>
-                    <tr><td>Range remaining</td><td><span id="rangeNowDiesel">407</span> km</td></tr>
-                    <tr><td>Fuel to add</td><td><input type="number" id="addDiesel" value="40" min="5" max="60" step="5"> l</td></tr>
-                    <tr><td>Tank after refuel</td><td><span id="afterDiesel">68.5</span> l</td></tr>
-                    <tr><td>New level</td><td><span id="newSocDiesel">137 %</span> (theoretical)</td></tr>
-                    <tr><td>Points added</td><td><span id="pointsDiesel">80 %p</span></td></tr>
-                    <tr><td>New range</td><td><span id="rangeAfterDiesel">979</span> km</td></tr>
-                    <tr class="price-row">
-                        <td><strong>Session price</strong></td>
-                        <td>
-                            <div class="price-label">Diesel price:</div>
-                            <input type="number" id="priceDieselRate" value="1.40" min="0.5" max="3" step="0.01"> €/l  
-                            → <span id="priceDiesel" class="result">56.00 €</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Petrol -->
-            <div>
-                <div class="section-title" style="background:#c2410c;">Petrol – Peugeot 308</div>
-                <table>
-                    <tr><td>Tank capacity</td><td>50 l</td></tr>
-                    <tr><td>Consumption</td><td><input type="number" id="consPetrolSim" value="8" min="4" max="15" step="0.5"> l/100km</td></tr>
-                    <tr><td>Arrival level</td><td><input type="number" id="socPetrol" value="57" min="0" max="100" step="1"> %</td></tr>
-                    <tr><td>Remaining fuel</td><td><span id="remPetrol">28.5</span> l</td></tr>
-                    <tr><td>Range remaining</td><td><span id="rangeNowPetrol">356</span> km</td></tr>
-                    <tr><td>Fuel to add</td><td><input type="number" id="addPetrol" value="40" min="5" max="60" step="5"> l</td></tr>
-                    <tr><td>Tank after refuel</td><td><span id="afterPetrol">68.5</span> l</td></tr>
-                    <tr><td>New level</td><td><span id="newSocPetrol">137 %</span> (theoretical)</td></tr>
-                    <tr><td>Points added</td><td><span id="pointsPetrol">80 %p</span></td></tr>
-                    <tr><td>New range</td><td><span id="rangeAfterPetrol">856</span> km</td></tr>
-                    <tr class="price-row">
-                        <td><strong>Session price</strong></td>
-                        <td>
-                            <div class="price-label">Petrol price:</div>
-                            <input type="number" id="pricePetrolRate" value="1.50" min="0.5" max="3" step="0.01"> €/l  
-                            → <span id="pricePetrol" class="result">60.00 €</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
+        <div>
+            <div class="section-title" style="background:#7c3aed;">Diesel</div>
+            <table>
+                <tr><td>Tank</td><td>50 l</td></tr>
+                <tr><td>Cons.</td><td><input type="number" id="consDieselSim" value="7" step="0.5"></td></tr>
+                <tr><td>Arrival %</td><td><input type="number" id="socDiesel" value="57" step="1"> %</td></tr>
+                <tr><td>Remaining</td><td><span id="remDiesel">28.5</span> l</td></tr>
+                <tr><td>Range now</td><td><span id="rangeNowDiesel">407</span> km</td></tr>
+                <tr><td>Refuel</td><td><input type="number" id="addDiesel" value="40" step="5"> l</td></tr>
+                <tr><td>After</td><td><span id="afterDiesel">68.5</span> l</td></tr>
+                <tr><td>New %</td><td><span id="newSocDiesel">137</span> %</td></tr>
+                <tr><td>New range</td><td><span id="rangeAfterDiesel">979</span> km</td></tr>
+                <tr>
+                    <td><strong>Price</strong></td>
+                    <td>
+                        <input type="number" id="priceDieselRate" value="1.40" step="0.01"> €/l →
+                        <span id="priceDiesel" class="result">56.00</span> €
+                    </td>
+                </tr>
+            </table>
         </div>
-    </div>
 
+        <div>
+            <div class="section-title" style="background:#c2410c;">Petrol</div>
+            <table>
+                <tr><td>Tank</td><td>50 l</td></tr>
+                <tr><td>Cons.</td><td><input type="number" id="consPetrolSim" value="8" step="0.5"></td></tr>
+                <tr><td>Arrival %</td><td><input type="number" id="socPetrol" value="57" step="1"> %</td></tr>
+                <tr><td>Remaining</td><td><span id="remPetrol">28.5</span> l</td></tr>
+                <tr><td>Range now</td><td><span id="rangeNowPetrol">356</span> km</td></tr>
+                <tr><td>Refuel</td><td><input type="number" id="addPetrol" value="40" step="5"> l</td></tr>
+                <tr><td>After</td><td><span id="afterPetrol">68.5</span> l</td></tr>
+                <tr><td>New %</td><td><span id="newSocPetrol">137</span> %</td></tr>
+                <tr><td>New range</td><td><span id="rangeAfterPetrol">856</span> km</td></tr>
+                <tr>
+                    <td><strong>Price</strong></td>
+                    <td>
+                        <input type="number" id="pricePetrolRate" value="1.50" step="0.01"> €/l →
+                        <span id="pricePetrol" class="result">60.00</span> €
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
 </div>
 
 <footer>
-    Interactive cost & refueling calculator • Leapmotor C10 data • January 2026
+    Mathias' Leapmotor C10 calculator • 2026
 </footer>
 
 <script>
+// ──────────────────────────────────────────────────────────────────────────────
+//   The JavaScript part is the same as in previous version – just more compact
+// ──────────────────────────────────────────────────────────────────────────────
+
 const BATTERY = 70;
 const TANK = 50;
-const CHARGE_RATE = 6;      // kW
-const CHARGE_HOURS = 6;
 
-// Monthly
-const monthlyKmEl         = document.getElementById('monthlyKm');
-const consEvEl            = document.getElementById('consEv');
-const priceEvEl           = document.getElementById('priceEv');
-const consDieselEl        = document.getElementById('consDiesel');
-const priceDieselMonthlyEl= document.getElementById('priceDieselMonthly');
-const consPetrolEl        = document.getElementById('consPetrol');
-const pricePetrolMonthlyEl= document.getElementById('pricePetrolMonthly');
-
-// Results monthly
-const needEvEl      = document.getElementById('needEv');
-const costEvEl      = document.getElementById('costEv');
-const needDieselEl  = document.getElementById('needDiesel');
-const costDieselEl  = document.getElementById('costDiesel');
-const needPetrolEl  = document.getElementById('needPetrol');
-const costPetrolEl  = document.getElementById('costPetrol');
-const savingsDieselEl = document.getElementById('savingsDiesel');
-const savingsPetrolEl = document.getElementById('savingsPetrol');
-
-// 6h AC
-const added6hEl  = document.getElementById('added6h');
-const cost6hEl   = document.getElementById('cost6h');
-const range6hEl  = document.getElementById('range6h');
-
-// EV sim
-const consEvSimEl    = document.getElementById('consEvSim');
-const socEvEl        = document.getElementById('socEv');
-const addEvEl        = document.getElementById('addEv');
-const priceEjoinRateEl = document.getElementById('priceEjoinRate');
-const priceZseRateEl   = document.getElementById('priceZseRate');
-
-const remEvEl        = document.getElementById('remEv');
-const rangeNowEvEl   = document.getElementById('rangeNowEv');
-const afterEvEl      = document.getElementById('afterEv');
-const newSocEvEl     = document.getElementById('newSocEv');
-const pointsEvEl     = document.getElementById('pointsEv');
-const rangeAfterEvEl = document.getElementById('rangeAfterEv');
-const priceEjoinEl   = document.getElementById('priceEjoin');
-const priceZseEl     = document.getElementById('priceZse');
-
-// Diesel sim
-const consDieselSimEl = document.getElementById('consDieselSim');
-const socDieselEl     = document.getElementById('socDiesel');
-const addDieselEl     = document.getElementById('addDiesel');
-const priceDieselRateEl = document.getElementById('priceDieselRate');
-
-const remDieselEl       = document.getElementById('remDiesel');
-const rangeNowDieselEl  = document.getElementById('rangeNowDiesel');
-const afterDieselEl     = document.getElementById('afterDiesel');
-const newSocDieselEl    = document.getElementById('newSocDiesel');
-const pointsDieselEl    = document.getElementById('pointsDiesel');
-const rangeAfterDieselEl= document.getElementById('rangeAfterDiesel');
-const priceDieselEl     = document.getElementById('priceDiesel');
-
-// Petrol sim
-const consPetrolSimEl = document.getElementById('consPetrolSim');
-const socPetrolEl     = document.getElementById('socPetrol');
-const addPetrolEl     = document.getElementById('addPetrol');
-const pricePetrolRateEl = document.getElementById('pricePetrolRate');
-
-const remPetrolEl       = document.getElementById('remPetrol');
-const rangeNowPetrolEl  = document.getElementById('rangeNowPetrol');
-const afterPetrolEl     = document.getElementById('afterPetrol');
-const newSocPetrolEl    = document.getElementById('newSocPetrol');
-const pointsPetrolEl    = document.getElementById('pointsPetrol');
-const rangeAfterPetrolEl= document.getElementById('rangeAfterPetrol');
-const pricePetrolEl     = document.getElementById('pricePetrol');
+const els = {
+    monthlyKm: document.getElementById('monthlyKm'),
+    consEv: document.getElementById('consEv'),
+    priceEv: document.getElementById('priceEv'),
+    consDiesel: document.getElementById('consDiesel'),
+    priceDieselMonthly: document.getElementById('priceDieselMonthly'),
+    consPetrol: document.getElementById('consPetrol'),
+    pricePetrolMonthly: document.getElementById('pricePetrolMonthly'),
+    needEv: document.getElementById('needEv'),
+    costEv: document.getElementById('costEv'),
+    needDiesel: document.getElementById('needDiesel'),
+    costDiesel: document.getElementById('costDiesel'),
+    needPetrol: document.getElementById('needPetrol'),
+    costPetrol: document.getElementById('costPetrol'),
+    savingsDiesel: document.getElementById('savingsDiesel'),
+    savingsPetrol: document.getElementById('savingsPetrol'),
+    added6h: document.getElementById('added6h'),
+    cost6h: document.getElementById('cost6h'),
+    range6h: document.getElementById('range6h'),
+    // EV sim
+    consEvSim: document.getElementById('consEvSim'),
+    socEv: document.getElementById('socEv'),
+    addEv: document.getElementById('addEv'),
+    priceEjoinRate: document.getElementById('priceEjoinRate'),
+    priceZseRate: document.getElementById('priceZseRate'),
+    remEv: document.getElementById('remEv'),
+    rangeNowEv: document.getElementById('rangeNowEv'),
+    afterEv: document.getElementById('afterEv'),
+    newSocEv: document.getElementById('newSocEv'),
+    rangeAfterEv: document.getElementById('rangeAfterEv'),
+    priceEjoin: document.getElementById('priceEjoin'),
+    priceZse: document.getElementById('priceZse'),
+    // Diesel
+    consDieselSim: document.getElementById('consDieselSim'),
+    socDiesel: document.getElementById('socDiesel'),
+    addDiesel: document.getElementById('addDiesel'),
+    priceDieselRate: document.getElementById('priceDieselRate'),
+    remDiesel: document.getElementById('remDiesel'),
+    rangeNowDiesel: document.getElementById('rangeNowDiesel'),
+    afterDiesel: document.getElementById('afterDiesel'),
+    newSocDiesel: document.getElementById('newSocDiesel'),
+    rangeAfterDiesel: document.getElementById('rangeAfterDiesel'),
+    priceDiesel: document.getElementById('priceDiesel'),
+    // Petrol
+    consPetrolSim: document.getElementById('consPetrolSim'),
+    socPetrol: document.getElementById('socPetrol'),
+    addPetrol: document.getElementById('addPetrol'),
+    pricePetrolRate: document.getElementById('pricePetrolRate'),
+    remPetrol: document.getElementById('remPetrol'),
+    rangeNowPetrol: document.getElementById('rangeNowPetrol'),
+    afterPetrol: document.getElementById('afterPetrol'),
+    newSocPetrol: document.getElementById('newSocPetrol'),
+    rangeAfterPetrol: document.getElementById('rangeAfterPetrol'),
+    pricePetrol: document.getElementById('pricePetrol')
+};
 
 function updateAll() {
-    // Monthly
-    let km = parseFloat(monthlyKmEl.value) || 500;
-    let consEv = parseFloat(consEvEl.value) || 16;
-    let pEv = parseFloat(priceEvEl.value) || 0.39;
-    let consDi = parseFloat(consDieselEl.value) || 7;
-    let pDi = parseFloat(priceDieselMonthlyEl.value) || 1.40;
-    let consPe = parseFloat(consPetrolEl.value) || 8;
-    let pPe = parseFloat(pricePetrolMonthlyEl.value) || 1.50;
+    const km = +els.monthlyKm.value || 500;
+    const ce = +els.consEv.value || 16;
+    const pe = +els.priceEv.value || 0.39;
+    const cd = +els.consDiesel.value || 7;
+    const pd = +els.priceDieselMonthly.value || 1.40;
+    const cp = +els.consPetrol.value || 8;
+    const pp = +els.pricePetrolMonthly.value || 1.50;
 
-    let needEv = (km / 100) * consEv;
-    let costEv = needEv * pEv;
-    let needDi = (km / 100) * consDi;
-    let costDi = needDi * pDi;
-    let needPe = (km / 100) * consPe;
-    let costPe = needPe * pPe;
+    const nEv = (km/100)*ce;  els.needEv.textContent = nEv.toFixed(1);
+    els.costEv.textContent = (nEv*pe).toFixed(2);
+    const nDi = (km/100)*cd;  els.needDiesel.textContent = nDi.toFixed(1);
+    els.costDiesel.textContent = (nDi*pd).toFixed(2);
+    const nPe = (km/100)*cp;  els.needPetrol.textContent = nPe.toFixed(1);
+    els.costPetrol.textContent = (nPe*pp).toFixed(2);
 
-    needEvEl.textContent = needEv.toFixed(1);
-    costEvEl.textContent = costEv.toFixed(2);
-    needDieselEl.textContent = needDi.toFixed(1);
-    costDieselEl.textContent = costDi.toFixed(2);
-    needPetrolEl.textContent = needPe.toFixed(1);
-    costPetrolEl.textContent = costPe.toFixed(2);
-    savingsDieselEl.textContent = (costDi - costEv).toFixed(2);
-    savingsPetrolEl.textContent = (costPe - costEv).toFixed(2);
+    els.savingsDiesel.textContent = ((nDi*pd) - (nEv*pe)).toFixed(2);
+    els.savingsPetrol.textContent = ((nPe*pp) - (nEv*pe)).toFixed(2);
 
-    // 6h AC charging
-    let added = CHARGE_HOURS * CHARGE_RATE;
-    let cost6h = added * 0.29;
-    let range6h = (added / consEv) * 100;
+    // 6h charging
+    const added = 6 * 6;
+    els.added6h.textContent = added.toFixed(1);
+    els.cost6h.textContent = (added * 0.29).toFixed(2);
+    els.range6h.textContent = Math.round((added / ce) * 100);
 
-    added6hEl.textContent = added.toFixed(1);
-    cost6hEl.textContent = cost6h.toFixed(2);
-    range6hEl.textContent = Math.round(range6h);
+    // EV sim
+    const ces = +els.consEvSim.value || ce;
+    const se = +els.socEv.value || 57;
+    const ae = +els.addEv.value || 40;
+    const pej = +els.priceEjoinRate.value || 0.29;
+    const pzs = +els.priceZseRate.value || 0.39;
 
-    // EV SIM
-    let consEvS = parseFloat(consEvSimEl.value) || consEv;
-    let socEv = parseFloat(socEvEl.value) || 57;
-    let addEv = parseFloat(addEvEl.value) || 40;
-    let pEjoin = parseFloat(priceEjoinRateEl.value) || 0.29;
-    let pZse   = parseFloat(priceZseRateEl.value) || 0.39;
+    const remE = (se/100)*70;
+    const rngE = (remE / ces) * 100;
+    const afterE = remE + ae;
+    const newSE = (afterE / 70) * 100;
 
-    let remEv = (socEv / 100) * BATTERY;
-    let rangeNowEv = (remEv / consEvS) * 100;
-    let afterEv = remEv + addEv;
-    let newSocEv = (afterEv / BATTERY) * 100;
+    els.remEv.textContent = remE.toFixed(1);
+    els.rangeNowEv.textContent = Math.round(rngE);
+    els.afterEv.textContent = afterE.toFixed(1);
+    els.newSocEv.textContent = Math.round(newSE);
+    els.rangeAfterEv.textContent = Math.round((afterE / ces) * 100);
+    els.priceEjoin.textContent = (ae * pej).toFixed(2);
+    els.priceZse.textContent = (ae * pzs).toFixed(2);
 
-    remEvEl.textContent = remEv.toFixed(1);
-    rangeNowEvEl.textContent = Math.round(rangeNowEv);
-    afterEvEl.textContent = afterEv.toFixed(1);
-    newSocEvEl.textContent = Math.round(newSocEv) + ' %';
-    pointsEvEl.textContent = Math.round(newSocEv - socEv) + ' %p';
-    rangeAfterEvEl.textContent = Math.round((afterEv / consEvS) * 100);
-    priceEjoinEl.textContent = (addEv * pEjoin).toFixed(2) + ' €';
-    priceZseEl.textContent   = (addEv * pZse).toFixed(2) + ' €';
+    // Diesel sim
+    const cds = +els.consDieselSim.value || cd;
+    const sd = +els.socDiesel.value || 57;
+    const ad = +els.addDiesel.value || 40;
+    const pdi = +els.priceDieselRate.value || 1.40;
 
-    // DIESEL SIM
-    let consDiS = parseFloat(consDieselSimEl.value) || consDi;
-    let socDi = parseFloat(socDieselEl.value) || 57;
-    let addDi = parseFloat(addDieselEl.value) || 40;
-    let pDiesel = parseFloat(priceDieselRateEl.value) || 1.40;
+    const remD = (sd/100)*50;
+    const rngD = (remD / cds) * 100;
+    const afterD = remD + ad;
+    const newSD = (afterD / 50) * 100;
 
-    let remDi = (socDi / 100) * TANK;
-    let rangeNowDi = (remDi / consDiS) * 100;
-    let afterDi = remDi + addDi;
-    let newSocDi = (afterDi / TANK) * 100;
+    els.remDiesel.textContent = remD.toFixed(1);
+    els.rangeNowDiesel.textContent = Math.round(rngD);
+    els.afterDiesel.textContent = afterD.toFixed(1);
+    els.newSocDiesel.textContent = Math.round(newSD);
+    els.rangeAfterDiesel.textContent = Math.round((afterD / cds) * 100);
+    els.priceDiesel.textContent = (ad * pdi).toFixed(2);
 
-    remDieselEl.textContent = remDi.toFixed(1);
-    rangeNowDieselEl.textContent = Math.round(rangeNowDi);
-    afterDieselEl.textContent = afterDi.toFixed(1);
-    newSocDieselEl.textContent = Math.round(newSocDi) + ' %';
-    pointsDieselEl.textContent = Math.round(newSocDi - socDi) + ' %p';
-    rangeAfterDieselEl.textContent = Math.round((afterDi / consDiS) * 100);
-    priceDieselEl.textContent = (addDi * pDiesel).toFixed(2) + ' €';
+    // Petrol sim
+    const cps = +els.consPetrolSim.value || cp;
+    const sp = +els.socPetrol.value || 57;
+    const ap = +els.addPetrol.value || 40;
+    const ppe = +els.pricePetrolRate.value || 1.50;
 
-    // PETROL SIM
-    let consPeS = parseFloat(consPetrolSimEl.value) || consPe;
-    let socPe = parseFloat(socPetrolEl.value) || 57;
-    let addPe = parseFloat(addPetrolEl.value) || 40;
-    let pPetrol = parseFloat(pricePetrolRateEl.value) || 1.50;
+    const remP = (sp/100)*50;
+    const rngP = (remP / cps) * 100;
+    const afterP = remP + ap;
+    const newSP = (afterP / 50) * 100;
 
-    let remPe = (socPe / 100) * TANK;
-    let rangeNowPe = (remPe / consPeS) * 100;
-    let afterPe = remPe + addPe;
-    let newSocPe = (afterPe / TANK) * 100;
-
-    remPetrolEl.textContent = remPe.toFixed(1);
-    rangeNowPetrolEl.textContent = Math.round(rangeNowPe);
-    afterPetrolEl.textContent = afterPe.toFixed(1);
-    newSocPetrolEl.textContent = Math.round(newSocPe) + ' %';
-    pointsPetrolEl.textContent = Math.round(newSocPe - socPe) + ' %p';
-    rangeAfterPetrolEl.textContent = Math.round((afterPe / consPeS) * 100);
-    pricePetrolEl.textContent = (addPe * pPetrol).toFixed(2) + ' €';
+    els.remPetrol.textContent = remP.toFixed(1);
+    els.rangeNowPetrol.textContent = Math.round(rngP);
+    els.afterPetrol.textContent = afterP.toFixed(1);
+    els.newSocPetrol.textContent = Math.round(newSP);
+    els.rangeAfterPetrol.textContent = Math.round((afterP / cps) * 100);
+    els.pricePetrol.textContent = (ap * ppe).toFixed(2);
 }
 
-// All inputs trigger update
 document.querySelectorAll('input[type="number"]').forEach(el => {
     el.addEventListener('input', updateAll);
 });
 
-// Initial calculation
 updateAll();
 </script>
 </body>
