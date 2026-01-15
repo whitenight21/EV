@@ -1,198 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leapmotor C10 Charging Costs and Comparisons</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Leapmotor C10 – Cost & Charging Calculator</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { text-align: center; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 40px; }
-        td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        tr:nth-child(even) { background-color: #f2f2f2; }
-        .section-header { font-weight: bold; background-color: #e0e0e0; }
+        body {
+            font-family: -apple-system, BlinkMacOSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            max-width: 980px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            background: #f9f9f9;
+            color: #111;
+        }
+        h1 { text-align: center; color: #1a3c6d; }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th { background: #f0f4f8; font-weight: 600; }
+        .section-title {
+            background: #e3f2fd;
+            color: #1565c0;
+            font-weight: bold;
+            padding: 10px;
+            margin: 1.5rem 0 0.5rem;
+        }
+        .editable {
+            background: #fff9e6;
+            font-weight: 500;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 6px 8px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            font: inherit;
+        }
+        .result { font-weight: 600; color: #d32f2f; }
+        .savings { color: #2e7d32; font-weight: bold; }
+        small { color: #555; }
     </style>
 </head>
 <body>
-    <h1>Leapmotor C10 vs. Peugeot 308 Cost Comparison and Charging Details</h1>
-    <p>This page displays calculations from the provided Excel file, including monthly costs, charging sessions, and battery details.</p>
-    
+
+<h1>Leapmotor C10 – Cost & Charging Calculator</h1>
+
+<div class="card">
+
+    <div class="section-title">Monthly Cost Comparison (500 km)</div>
     <table>
-        <tbody>
-            <tr class="section-header">
-                <td colspan="5">Cost of charging Leapmotor C10 -- eJoin 0.29 €/kWh AC</td>
-            </tr>
-            <tr>
-                <td>km / month</td>
-                <td>kWh / 100 km</td>
-                <td>€ / kWh</td>
-                <td>Needed kWh</td>
-                <td>COST €</td>
-            </tr>
-            <tr>
-                <td>500</td>
-                <td>15</td>
-                <td>0.39</td>
-                <td>75</td>
-                <td>29.25</td>
-            </tr>
-            <tr class="section-header">
-                <td colspan="5">Cost of filling up Peugeot 308 -- diesel</td>
-            </tr>
-            <tr>
-                <td>km / month</td>
-                <td>l / 100 km</td>
-                <td>€ / l</td>
-                <td>Needed litres</td>
-                <td>COST €</td>
-            </tr>
-            <tr>
-                <td>500</td>
-                <td>7</td>
-                <td>1.4</td>
-                <td>35</td>
-                <td>49</td>
-            </tr>
-            <tr>
-                <td>Difference in cost : C10 - P308 :</td>
-                <td></td>
-                <td></td>
-                <td>19.75</td>
-                <td></td>
-            </tr>
-            <tr class="section-header">
-                <td colspan="5">6h charging at eJoin AC: 0.29 €/kWh - kWh added and price</td>
-            </tr>
-            <tr>
-                <td>charging h</td>
-                <td>ch. rate kwh</td>
-                <td>€ / kWh</td>
-                <td>Added kWh</td>
-                <td>COST €</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>6</td>
-                <td>0.29</td>
-                <td>36</td>
-                <td>10.44</td>
-            </tr>
-            <tr>
-                <td>Range with this charging:</td>
-                <td></td>
-                <td>225</td>
-                <td>km</td>
-                <td></td>
-            </tr>
-            <tr class="section-header">
-                <td colspan="5">Battery and Charging Details</td>
-            </tr>
-            <tr>
-                <td>C10 Battery capacity</td>
-                <td></td>
-                <td>70</td>
-                <td>kWh</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Consumption kWh/100km</td>
-                <td></td>
-                <td>16</td>
-                <td>kWh / 100 km</td>
-                <td>editable</td>
-            </tr>
-            <tr>
-                <td>Arrival SOC %</td>
-                <td></td>
-                <td>57</td>
-                <td>%</td>
-                <td>editable</td>
-            </tr>
-            <tr>
-                <td>Range at current battery %</td>
-                <td></td>
-                <td>249.375</td>
-                <td>km remaining</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Remaining battery</td>
-                <td></td>
-                <td>39.9</td>
-                <td>kWh remaining</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Charge needed for 80%</td>
-                <td></td>
-                <td>16.1</td>
-                <td>kWh</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Charged energy at station</td>
-                <td></td>
-                <td>40</td>
-                <td>kWh</td>
-                <td>editable</td>
-            </tr>
-            <tr>
-                <td>Battery after charging</td>
-                <td></td>
-                <td>79.9</td>
-                <td>kWh</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>New SOC (%)</td>
-                <td></td>
-                <td>114.142857</td>
-                <td>%</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Percentage points added</td>
-                <td></td>
-                <td>57.142857</td>
-                <td>%</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Range after charging</td>
-                <td></td>
-                <td>499.375</td>
-                <td>km remaining</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Price at ejoin: 0.29€/kWh</td>
-                <td></td>
-                <td>11.6</td>
-                <td>€</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Price at ZSE: 0.39€/kWh</td>
-                <td></td>
-                <td>15.6</td>
-                <td>€ for kWh in C20</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>ZSE Pausal 12,90</td>
-                <td></td>
-                <td>28.5</td>
-                <td>40kwh za 12,90 + C26</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>ZSE Pausal 30</td>
-                <td></td>
-                <td></td>
-                <td>100 kWh</td>
-                <td></td>
-            </tr>
-        </tbody>
+        <tr>
+            <th>Vehicle</th>
+            <th>Consumption</th>
+            <th>Price per unit</th>
+            <th>Needed</th>
+            <th>Cost €</th>
+        </tr>
+        <tr>
+            <td>Leapmotor C10 (AC eJoin)</td>
+            <td><input type="number" id="cons" value="16" min="8" max="30" step="0.5"> kWh/100 km</td>
+            <td>0.39 €/kWh</td>
+            <td><span id="needKwh">80.0</span> kWh</td>
+            <td class="result"><span id="costEv">31.20</span> €</td>
+        </tr>
+        <tr>
+            <td>Peugeot 308 Diesel</td>
+            <td>7 l/100 km</td>
+            <td>1.40 €/l</td>
+            <td>35 l</td>
+            <td>49.00 €</td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align:right">Monthly savings with C10:</td>
+            <td class="savings"><span id="savings">17.80</span> €</td>
+        </tr>
     </table>
+
+    <div class="section-title">6h Charging Session @ eJoin AC (0.29 €/kWh)</div>
+    <table>
+        <tr>
+            <td>Charging time</td>
+            <td>6 h</td>
+        </tr>
+        <tr>
+            <td>Charging rate</td>
+            <td>6 kW</td>
+        </tr>
+        <tr>
+            <td>Added energy</td>
+            <td><span id="added6h">36.0</span> kWh</td>
+        </tr>
+        <tr>
+            <td>Cost</td>
+            <td class="result"><span id="cost6h">10.44</span> €</td>
+        </tr>
+        <tr>
+            <td>Estimated range added</td>
+            <td><span id="range6h">225</span> km</td>
+        </tr>
+    </table>
+
+    <div class="section-title">Battery Status & Fast Charge Simulation</div>
+    <table>
+        <tr>
+            <td>Battery capacity</td>
+            <td>70 kWh</td>
+        </tr>
+        <tr>
+            <td>Consumption</td>
+            <td class="editable">
+                <input type="number" id="cons2" value="16" min="8" max="30" step="0.5"> kWh/100 km
+            </td>
+        </tr>
+        <tr>
+            <td>Arrival SOC</td>
+            <td class="editable">
+                <input type="number" id="soc" value="57" min="0" max="100" step="1"> %
+            </td>
+        </tr>
+        <tr>
+            <td>Remaining energy</td>
+            <td><span id="remKwh">39.9</span> kWh</td>
+        </tr>
+        <tr>
+            <td>Range remaining</td>
+            <td><span id="rangeNow">249</span> km</td>
+        </tr>
+        <tr>
+            <td>Energy to charge at station</td>
+            <td class="editable">
+                <input type="number" id="chargeKwh" value="40" min="5" max="70" step="5"> kWh
+            </td>
+        </tr>
+        <tr>
+            <td>Battery after charging</td>
+            <td><span id="afterKwh">79.9</span> kWh</td>
+        </tr>
+        <tr>
+            <td>New SOC</td>
+            <td><span id="newSoc">114 %</span> (overcharge theoretical)</td>
+        </tr>
+        <tr>
+            <td>Percentage points added</td>
+            <td><span id="pointsAdded">57 %p</span></td>
+        </tr>
+        <tr>
+            <td>New range after charging</td>
+            <td><span id="rangeAfter">499</span> km</td>
+        </tr>
+        <tr>
+            <td><strong>Price for this session</strong></td>
+            <td>
+                <strong>eJoin AC:</strong> <span id="priceEjoin" class="result">11.60 €</span><br>
+                <strong>ZSE 0.39 €/kWh:</strong> <span id="priceZse" class="result">15.60 €</span>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<footer style="text-align:center; color:#666; font-size:0.9rem; margin-top:3rem;">
+    Simple calculator inspired by your Leapmotor C10 spreadsheet • Values update live
+</footer>
+
+<script>
+const BATTERY = 70;
+const CONS_BASE = 15; // used in monthly comparison
+
+// Elements
+const cons   = document.getElementById('cons');
+const cons2  = document.getElementById('cons2');
+const soc    = document.getElementById('soc');
+const charge = document.getElementById('chargeKwh');
+
+// Monthly section
+const needKwhEl   = document.getElementById('needKwh');
+const costEvEl    = document.getElementById('costEv');
+const savingsEl   = document.getElementById('savings');
+
+// 6h session (fixed)
+const added6hEl   = document.getElementById('added6h');
+const cost6hEl    = document.getElementById('cost6h');
+const range6hEl   = document.getElementById('range6h');
+
+// Status section
+const remKwhEl    = document.getElementById('remKwh');
+const rangeNowEl  = document.getElementById('rangeNow');
+const afterKwhEl  = document.getElementById('afterKwh');
+const newSocEl    = document.getElementById('newSoc');
+const pointsEl    = document.getElementById('pointsAdded');
+const rangeAfterEl= document.getElementById('rangeAfter');
+const priceEjoinEl= document.getElementById('priceEjoin');
+const priceZseEl  = document.getElementById('priceZse');
+
+function updateAll() {
+    // Get current values
+    let consumption = parseFloat(cons.value) || 16;
+    let consumption2 = parseFloat(cons2.value) || consumption; // sync if not changed separately
+    let arrivalSoc  = parseFloat(soc.value)   || 57;
+    let chargedKwh  = parseFloat(charge.value)|| 40;
+
+    // Monthly comparison (uses cons)
+    let needKwh = (500 / 100) * consumption;
+    let costEv  = needKwh * 0.39;
+    let savings = 49 - costEv;
+
+    needKwhEl.textContent  = needKwh.toFixed(1);
+    costEvEl.textContent   = costEv.toFixed(2);
+    savingsEl.textContent  = savings.toFixed(2);
+
+    // 6h charging (uses current consumption2)
+    let added = 6 * 6;
+    let cost6h = added * 0.29;
+    let range6h = (added / consumption2) * 100;
+
+    added6hEl.textContent  = added.toFixed(1);
+    cost6hEl.textContent   = cost6h.toFixed(2);
+    range6hEl.textContent  = Math.round(range6h);
+
+    // Battery status
+    let remKwh    = (arrivalSoc / 100) * BATTERY;
+    let rangeNow  = (remKwh / consumption2) * 100;
+    let afterKwh  = Math.min(remKwh + chargedKwh, BATTERY * 1.15); // theoretical max
+    let newSoc    = (afterKwh / BATTERY) * 100;
+    let points    = newSoc - arrivalSoc;
+    let rangeAfter= (afterKwh / consumption2) * 100;
+
+    remKwhEl.textContent    = remKwh.toFixed(1);
+    rangeNowEl.textContent  = Math.round(rangeNow);
+    afterKwhEl.textContent  = afterKwh.toFixed(1);
+    newSocEl.textContent    = Math.round(newSoc) + ' %';
+    pointsEl.textContent    = Math.round(points) + ' %p';
+    rangeAfterEl.textContent= Math.round(rangeAfter);
+
+    // Prices
+    priceEjoinEl.textContent = (chargedKwh * 0.29).toFixed(2) + ' €';
+    priceZseEl.textContent   = (chargedKwh * 0.39).toFixed(2) + ' €';
+}
+
+// Sync both consumption fields
+cons.addEventListener('input', () => {
+    cons2.value = cons.value;
+    updateAll();
+});
+cons2.addEventListener('input', () => {
+    cons.value = cons2.value;
+    updateAll();
+});
+
+// All other inputs trigger update
+[soc, charge].forEach(el => el.addEventListener('input', updateAll));
+
+// Initial calculation
+updateAll();
+</script>
 </body>
 </html>
