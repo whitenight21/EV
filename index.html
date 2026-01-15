@@ -1,381 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>EV vs ICE – Trip Cost Calculator</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Leapmotor C10 – Cost & Trip Calculator</title>
+    <style>
+        :root {
+            --primary:    #2563eb;
+            --primary-d:  #1d4ed8;
+            --success:    #16a34a;
+            --danger:     #dc2626;
+            --light:      #f8fafc;
+            --gray:       #64748b;
+            --dark:       #0f172a;
+            --card-bg:    #ffffff;
+            --border:     #e2e8f0;
+            --ev-bg:      #e0f2fe;
+        }
 
-<style>
-    :root {
-        --primary: #2563eb;
-        --success: #16a34a;
-        --danger:  #dc2626;
-        --light:   #f8fafc;
-        --gray:    #64748b;
-        --dark:    #0f172a;
-        --card:    #ffffff;
-        --border:  #e2e8f0;
-        --ev-bg:   #e0f2fe;
-    }
+        * { box-sizing: border-box; }
 
-    body {
-        font-family: system-ui, -apple-system, BlinkMacOSystemFont, 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
-        color: var(--dark);
-        margin: 0;
-        padding: 12px 10px;
-        font-size: 15px;
-        line-height: 1.42;
-    }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacOSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+            color: var(--dark);
+            margin: 0;
+            padding: 12px;
+            font-size: 15px;
+            line-height: 1.45;
+        }
 
-    h1, h2 { margin: 0.8em 0; text-align: center; }
-    h1 { font-size: 1.8rem; color: #1d4ed8; }
-    h2 { font-size: 1.35rem; margin-top: 1.8rem; }
+        h1 { font-size: 1.8rem; text-align: center; color: var(--primary-d); margin: 0.8em 0; }
+        h2 { font-size: 1.35rem; margin: 1.8rem 0 1rem; text-align: center; }
 
-    .card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 5px 16px rgba(0,0,0,0.07);
-        padding: 1.2rem 1rem;
-        margin-bottom: 1.8rem;
-    }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 5px 16px rgba(0,0,0,0.07);
+            padding: 1.2rem 1rem;
+            margin-bottom: 1.8rem;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 0.7rem 0;
-        font-size: 0.93rem;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.7rem 0;
+            font-size: 0.93rem;
+        }
 
-    th, td {
-        padding: 8px 9px;
-        border: 1px solid #dfe6ed;
-    }
+        th, td {
+            padding: 8px 9px;
+            border: 1px solid #dfe6ed;
+        }
 
-    th {
-        background: #f0f7ff;
-        color: #1d4ed8;
-        font-weight: 600;
-        font-size: 0.88rem;
-    }
+        th {
+            background: #f0f7ff;
+            color: #1d4ed8;
+            font-weight: 600;
+            font-size: 0.88rem;
+        }
 
-    input[type="number"] {
-        width: 88px;
-        padding: 5px 7px;
-        font-size: 0.94rem;
-        border: 1.5px solid #c3d4e8;
-        border-radius: 6px;
-    }
+        input[type="number"] {
+            width: 88px;
+            padding: 5px 7px;
+            font-size: 0.94rem;
+            border: 1.5px solid #c3d4e8;
+            border-radius: 6px;
+        }
 
-    input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
-    }
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
+        }
 
-    .result { color: var(--danger); font-weight: 700; }
-    .success { color: var(--success); font-weight: 700; }
+        .result { color: var(--danger); font-weight: 700; }
+        .savings { color: var(--success); font-weight: 700; }
 
-    .trip-stop {
-        margin-bottom: 1.3rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px dashed #ccc;
-    }
+        .section-title {
+            background: var(--primary);
+            color: white;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin: 1.4rem 0 0.9rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
 
-    .trip-total {
-        margin-top: 1.1rem;
-        padding: 1rem;
-        background: #f0fff4;
-        border-radius: 10px;
-        font-weight: 600;
-    }
+        .km-input { text-align: center; margin: 1.3rem 0; font-weight: 600; color: var(--primary-d); }
 
-    .add-stop-btn {
-        margin: 0.8rem 0;
-        padding: 8px 16px;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        cursor: pointer;
-    }
+        .trip-stop {
+            margin-bottom: 1.3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed #ccc;
+            font-size: 0.92rem;
+        }
 
-    .simulations > div { margin-bottom: 2.2rem; }
+        .trip-total {
+            margin-top: 1.1rem;
+            padding: 1rem;
+            background: #f0fff4;
+            border-radius: 10px;
+            font-weight: 600;
+        }
 
-    footer {
-        text-align: center;
-        color: #6b7280;
-        font-size: 0.83rem;
-        margin: 2.8rem 0 1.2rem;
-    }
+        .add-stop-btn {
+            margin: 0.8rem 0;
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
 
-    @media (min-width: 480px) {
-        body { padding: 1.5rem; font-size: 16px; }
-        .card { padding: 1.5rem 1.2rem; }
-        input[type="number"] { width: 100px; }
-    }
-</style>
+        footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.83rem;
+            margin: 2.8rem 0 1.2rem;
+        }
+
+        @media (min-width: 480px) {
+            body { padding: 1.5rem; font-size: 16px; }
+            .card { padding: 1.5rem 1.2rem; }
+            input[type="number"] { width: 100px; }
+        }
+    </style>
 </head>
 <body>
 
-<h1>⚡ EV vs ICE Trip Cost Calculator</h1>
+<h1>⚡ Leapmotor C10 – Cost & Trip Calculator</h1>
 
-<!-- Monthly quick check (optional reference) -->
+<!-- Monthly comparison -->
 <div class="card">
-    <h2>Monthly reference</h2>
-    <div style="text-align:center; margin:1rem 0;">
-        km/month: <input type="number" id="monthlyKm" value="500" min="100" step="100">
+    <div class="section-title">Monthly Cost Comparison (500 km reference)</div>
+    <div class="km-input">
+        <label for="monthlyKm">km/month:</label>
+        <input type="number" id="monthlyKm" value="500" min="100" step="100">
     </div>
+
     <table>
-        <tr><th></th><th>Cons.</th><th>€/unit</th><th>Cost</th></tr>
-        <tr><td>EV</td>    <td><input id="consEv"     value="16"   step="0.5"> kWh</td><td><input id="priceEv" value="0.39" step="0.01"></td><td class="result"><span id="costEv">31.20</span> €</td></tr>
-        <tr><td>Diesel</td><td><input id="consDiesel" value="7"    step="0.5"> l</td>  <td><input id="priceDieselMonthly" value="1.40" step="0.01"></td><td class="result"><span id="costDiesel">49.00</span> €</td></tr>
-        <tr><td>Petrol</td><td><input id="consPetrol" value="8"    step="0.5"> l</td>  <td><input id="pricePetrolMonthly" value="1.50" step="0.01"></td><td class="result"><span id="costPetrol">60.00</span> €</td></tr>
+        <tr><th>Type</th><th>Cons.</th><th>€/unit</th><th>Cost</th></tr>
+        <tr class="highlight-ev">
+            <td>Electric</td>
+            <td><input type="number" id="consEv" value="16" step="0.5"> kWh</td>
+            <td><input type="number" id="priceEv" value="0.39" step="0.01"> €</td>
+            <td class="result"><span id="costEv">31.20</span> €</td>
+        </tr>
+        <tr>
+            <td>Diesel</td>
+            <td><input type="number" id="consDiesel" value="7" step="0.5"> l</td>
+            <td><input type="number" id="priceDieselMonthly" value="1.40" step="0.01"> €</td>
+            <td class="result"><span id="costDiesel">49.00</span> €</td>
+        </tr>
+        <tr>
+            <td>Petrol</td>
+            <td><input type="number" id="consPetrol" value="8" step="0.5"> l</td>
+            <td><input type="number" id="pricePetrolMonthly" value="1.50" step="0.01"> €</td>
+            <td class="result"><span id="costPetrol">60.00</span> €</td>
+        </tr>
     </table>
 </div>
 
-
-<!-- ── TRIP CALCULATOR ─────────────────────────────────────────────── -->
+<!-- 6h charging preview -->
 <div class="card">
-    <h2>Trip with multiple stops</h2>
+    <div class="section-title">6h @ 6kW (eJoin reference)</div>
+    <table>
+        <tr><td>Added</td><td><strong><span id="added6h">36.0</span> kWh</strong></td></tr>
+        <tr><td>Cost</td><td class="result"><strong><span id="cost6h">10.44</span> €</strong></td></tr>
+        <tr><td>Range +</td><td><strong><span id="range6h">225</span> km</strong></td></tr>
+    </table>
+</div>
 
-    <div class="simulations">
+<!-- NEW: TRIP COST CALCULATOR -->
+<div class="card">
+    <div class="section-title">Trip Cost Calculator – Multi-stop</div>
 
-        <!-- EV -->
+    <div style="display: flex; flex-direction: column; gap: 2.2rem;">
+
+        <!-- EV Trip -->
         <div>
-            <h2 style="color:#1e40af;">Electric – Leapmotor C10</h2>
-            <div id="ev-stops"></div>
-
-            <button class="add-stop-btn" style="background:#2563eb;" onclick="addEvStop()">+ Charging stop</button>
+            <h2 style="color:#1e40af; margin-top:0;">Electric – Leapmotor C10</h2>
+            <div id="ev-stops-container">
+                <!-- Starting point -->
+                <div class="trip-stop">
+                    <strong>Start</strong><br>
+                    Starting SoC: <input type="number" class="ev-start-soc" value="95" min="0" max="100" step="1"> %<br>
+                    <small>(first distance = to first charging stop)</small>
+                </div>
+            </div>
+            <button class="add-stop-btn" style="background:#2563eb;" onclick="addEvStop()">+ Add Charging Stop</button>
 
             <div class="trip-total">
-                <div>Total distance: <span id="ev-total-km">0</span> km</div>
-                <div>Energy used:   <span id="ev-used">0.0</span> kWh</div>
-                <div>Total cost:    <span id="ev-cost" class="result">0.00</span> €</div>
+                <div>Total distance: <span id="ev-total-dist">0</span> km</div>
+                <div>Energy used:   <span id="ev-total-used">0.0</span> kWh</div>
+                <div>Total cost:    <span id="ev-total-cost" class="result">0.00</span> €</div>
             </div>
         </div>
 
-
-        <!-- Diesel -->
+        <!-- Diesel Trip -->
         <div>
-            <h2 style="color:#7c3aed;">Diesel</h2>
-            <div id="diesel-stops"></div>
-
-            <button class="add-stop-btn" style="background:#7c3aed;" onclick="addDieselStop()">+ Refuel stop</button>
+            <h2 style="color:#7c3aed; margin-top:0;">Diesel – Peugeot 308</h2>
+            <div id="diesel-stops-container">
+                <div class="trip-stop">
+                    <strong>Start</strong><br>
+                    Starting level: <input type="number" class="diesel-start-level" value="90" min="0" max="100" step="1"> %<br>
+                    <small>(first distance = to first refuel)</small>
+                </div>
+            </div>
+            <button class="add-stop-btn" style="background:#7c3aed;" onclick="addDieselStop()">+ Add Refuel Stop</button>
 
             <div class="trip-total">
-                <div>Total distance: <span id="diesel-total-km">0</span> km</div>
-                <div>Fuel used:     <span id="diesel-used">0.0</span> l</div>
-                <div>Total cost:    <span id="diesel-cost" class="result">0.00</span> €</div>
+                <div>Total distance: <span id="diesel-total-dist">0</span> km</div>
+                <div>Fuel used:     <span id="diesel-total-used">0.0</span> l</div>
+                <div>Total cost:    <span id="diesel-total-cost" class="result">0.00</span> €</div>
             </div>
         </div>
 
-
-        <!-- Petrol -->
+        <!-- Petrol Trip -->
         <div>
-            <h2 style="color:#c2410c;">Petrol</h2>
-            <div id="petrol-stops"></div>
-
-            <button class="add-stop-btn" style="background:#c2410c;" onclick="addPetrolStop()">+ Refuel stop</button>
+            <h2 style="color:#c2410c; margin-top:0;">Petrol – Peugeot 308</h2>
+            <div id="petrol-stops-container">
+                <div class="trip-stop">
+                    <strong>Start</strong><br>
+                    Starting level: <input type="number" class="petrol-start-level" value="90" min="0" max="100" step="1"> %<br>
+                    <small>(first distance = to first refuel)</small>
+                </div>
+            </div>
+            <button class="add-stop-btn" style="background:#c2410c;" onclick="addPetrolStop()">+ Add Refuel Stop</button>
 
             <div class="trip-total">
-                <div>Total distance: <span id="petrol-total-km">0</span> km</div>
-                <div>Fuel used:     <span id="petrol-used">0.0</span> l</div>
-                <div>Total cost:    <span id="petrol-cost" class="result">0.00</span> €</div>
+                <div>Total distance: <span id="petrol-total-dist">0</span> km</div>
+                <div>Fuel used:     <span id="petrol-total-used">0.0</span> l</div>
+                <div>Total cost:    <span id="petrol-total-cost" class="result">0.00</span> €</div>
             </div>
         </div>
 
     </div>
 </div>
 
-<footer>Mathias' EV/ICE trip planner • January 2026</footer>
+<footer>Mathias' Leapmotor C10 calculator • January 2026</footer>
 
 <script>
-// Global consumption (can be changed in monthly section)
+// Global consumption values
 let CONS_EV     = 16;
 let CONS_DIESEL = 7;
 let CONS_PETROL = 8;
 
-document.getElementById('consEv')    .oninput = e => CONS_EV     = +e.target.value || 16;
-document.getElementById('consDiesel').oninput = e => CONS_DIESEL = +e.target.value || 7;
-document.getElementById('consPetrol').oninput = e => CONS_PETROL = +e.target.value || 8;
+const BATTERY_KWH = 70;
+const TANK_LITERS = 50;
+
+// Update consumption when changed in monthly section
+document.getElementById('consEv')    .addEventListener('input', e => CONS_EV     = +e.target.value || 16);
+document.getElementById('consDiesel').addEventListener('input', e => CONS_DIESEL = +e.target.value || 7);
+document.getElementById('consPetrol').addEventListener('input', e => CONS_PETROL = +e.target.value || 8);
 
 
-// ── HELPERS ────────────────────────────────────────────────────────────────
-function createStopHTML(type, index) {
-    if (type === 'ev') {
-        return `
-        <div class="trip-stop" data-index="${index}">
-            <strong>Stop ${index}</strong> – Charging<br>
-            Charge rate: <input type="number" class="ev-kw"   value="${index===1 ? 50 : 22}" step="5" min="3"> kW<br>
-            kWh added:   <input type="number" class="ev-kwh"  value="${index===1 ? 28 : 18}" step="2" min="0"><br>
-            €/kWh:       <input type="number" class="ev-eur"  value="0.39" step="0.01"><br>
-            Distance → next: <input type="number" class="ev-km" value="0" step="10" min="0"> km
-        </div>`;
-    }
-    if (type === 'diesel') {
-        return `
-        <div class="trip-stop" data-index="${index}">
-            <strong>Stop ${index}</strong> – Refuel<br>
-            Liters added: <input type="number" class="di-l"   value="${index===1 ? 38 : 30}" step="5" min="0"><br>
-            €/liter:      <input type="number" class="di-eur" value="1.40" step="0.01"><br>
-            Distance → next: <input type="number" class="di-km" value="0" step="10" min="0"> km
-        </div>`;
-    }
-    // petrol
-    return `
-    <div class="trip-stop" data-index="${index}">
-        <strong>Stop ${index}</strong> – Refuel<br>
-        Liters added: <input type="number" class="pe-l"   value="${index===1 ? 35 : 28}" step="5" min="0"><br>
-        €/liter:      <input type="number" class="pe-eur" value="1.50" step="0.01"><br>
-        Distance → next: <input type="number" class="pe-km" value="0" step="10" min="0"> km
-    </div>`;
-}
-
-
-// ── EV ─────────────────────────────────────────────────────────────────────
+// ── EV Trip Logic ───────────────────────────────────────────────────────────
 function addEvStop() {
-    const cont = document.getElementById('ev-stops');
-    const idx = cont.children.length;
-    cont.insertAdjacentHTML('beforeend', createStopHTML('ev', idx));
+    const container = document.getElementById('ev-stops-container');
+    const index = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'trip-stop';
+    div.innerHTML = `
+        <strong>Stop ${index} – Charging</strong><br>
+        Charge rate: <input type="number" class="ev-rate" value="50" min="5" step="5"> kW<br>
+        kWh added:   <input type="number" class="ev-added" value="25" min="0" step="5"><br>
+        €/kWh:       <input type="number" class="ev-price" value="0.39" step="0.01"><br>
+        Distance to next: <input type="number" class="ev-dist" value="180" min="0" step="10"> km
+    `;
+    container.appendChild(div);
     updateAllTrips();
 }
 
-function calcEv() {
-    const stops = document.querySelectorAll('#ev-stops .trip-stop');
-    if (stops.length === 0) return {km:0, used:0, cost:0};
+function updateEvTrip() {
+    const stops = document.querySelectorAll('#ev-stops-container .trip-stop');
+    let soc = +document.querySelector('.ev-start-soc')?.value || 95;
+    let totalDist = 0, totalUsed = 0, totalCost = 0;
 
-    let soc = 95; // starting assumption
-    let totalKm = 0;
-    let totalUsed = 0;
-    let totalCost = 0;
-
-    stops.forEach(stop => {
-        const km = +stop.querySelector('.ev-km').value || 0;
-        const used = (km / 100) * CONS_EV;
-        totalKm += km;
+    document.querySelectorAll('#ev-stops-container .ev-dist').forEach((distInput, i) => {
+        const dist = +distInput.value || 0;
+        const used = (dist / 100) * CONS_EV;
+        totalDist += dist;
         totalUsed += used;
 
-        // charging happens before driving away (except start)
-        const addedKwh = +stop.querySelector('.ev-kwh')?.value || 0;
-        const price    = +stop.querySelector('.ev-eur')?.value || 0.39;
-        if (addedKwh > 0) {
-            totalCost += addedKwh * price;
-            soc += (addedKwh / 70) * 100;
+        // Charging happens before next segment (except after last)
+        if (i < stops.length) {
+            const stop = stops[i];
+            const added = +stop.querySelector('.ev-added')?.value || 0;
+            const price = +stop.querySelector('.ev-price')?.value || 0.39;
+            totalCost += added * price;
+            soc = Math.min(100, soc - (used / BATTERY_KWH * 100) + (added / BATTERY_KWH * 100));
         }
-        soc -= (used / 70) * 100;
     });
 
-    return {km: totalKm, used: totalUsed, cost: totalCost};
+    document.getElementById('ev-total-dist').textContent = totalDist;
+    document.getElementById('ev-total-used').textContent = totalUsed.toFixed(1);
+    document.getElementById('ev-total-cost').textContent = totalCost.toFixed(2);
 }
 
 
-// ── Diesel / Petrol (very similar) ─────────────────────────────────────────
+// ── Diesel & Petrol (similar structure) ─────────────────────────────────────
 function addDieselStop() {
-    const cont = document.getElementById('diesel-stops');
-    const idx = cont.children.length;
-    cont.insertAdjacentHTML('beforeend', createStopHTML('diesel', idx));
+    const container = document.getElementById('diesel-stops-container');
+    const index = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'trip-stop';
+    div.innerHTML = `
+        <strong>Stop ${index} – Refuel</strong><br>
+        Liters added: <input type="number" class="diesel-added" value="35" min="0" step="5"><br>
+        €/liter:      <input type="number" class="diesel-price" value="1.40" step="0.01"><br>
+        Distance to next: <input type="number" class="diesel-dist" value="400" min="0" step="10"> km
+    `;
+    container.appendChild(div);
     updateAllTrips();
 }
 
-function calcDiesel() {
-    const stops = document.querySelectorAll('#diesel-stops .trip-stop');
-    if (stops.length === 0) return {km:0, used:0, cost:0};
+function updateDieselTrip() {
+    const stops = document.querySelectorAll('#diesel-stops-container .trip-stop');
+    let level = +document.querySelector('.diesel-start-level')?.value || 90;
+    let totalDist = 0, totalUsed = 0, totalCost = 0;
 
-    let tank = 90; // starting %
-    let totalKm = 0;
-    let totalUsed = 0;
-    let totalCost = 0;
-
-    stops.forEach(stop => {
-        const km = +stop.querySelector('.di-km').value || 0;
-        const used = (km / 100) * CONS_DIESEL;
-        totalKm += km;
+    document.querySelectorAll('#diesel-stops-container .diesel-dist').forEach((distInput, i) => {
+        const dist = +distInput.value || 0;
+        const used = (dist / 100) * CONS_DIESEL;
+        totalDist += dist;
         totalUsed += used;
 
-        const addedL = +stop.querySelector('.di-l')?.value || 0;
-        const price  = +stop.querySelector('.di-eur')?.value || 1.40;
-        if (addedL > 0) {
-            totalCost += addedL * price;
-            tank += (addedL / 50) * 100;
+        if (i < stops.length) {
+            const stop = stops[i];
+            const added = +stop.querySelector('.diesel-added')?.value || 0;
+            const price = +stop.querySelector('.diesel-price')?.value || 1.40;
+            totalCost += added * price;
+            level = Math.min(100, level - (used / TANK_LITERS * 100) + (added / TANK_LITERS * 100));
         }
-        tank -= (used / 50) * 100;
     });
 
-    return {km: totalKm, used: totalUsed, cost: totalCost};
+    document.getElementById('diesel-total-dist').textContent = totalDist;
+    document.getElementById('diesel-total-used').textContent = totalUsed.toFixed(1);
+    document.getElementById('diesel-total-cost').textContent = totalCost.toFixed(2);
 }
-
 
 function addPetrolStop() {
-    const cont = document.getElementById('petrol-stops');
-    const idx = cont.children.length;
-    cont.insertAdjacentHTML('beforeend', createStopHTML('petrol', idx));
+    const container = document.getElementById('petrol-stops-container');
+    const index = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'trip-stop';
+    div.innerHTML = `
+        <strong>Stop ${index} – Refuel</strong><br>
+        Liters added: <input type="number" class="petrol-added" value="35" min="0" step="5"><br>
+        €/liter:      <input type="number" class="petrol-price" value="1.50" step="0.01"><br>
+        Distance to next: <input type="number" class="petrol-dist" value="350" min="0" step="10"> km
+    `;
+    container.appendChild(div);
     updateAllTrips();
 }
 
-function calcPetrol() {
-    // almost identical to diesel
-    const stops = document.querySelectorAll('#petrol-stops .trip-stop');
-    if (stops.length === 0) return {km:0, used:0, cost:0};
+function updatePetrolTrip() {
+    const stops = document.querySelectorAll('#petrol-stops-container .trip-stop');
+    let level = +document.querySelector('.petrol-start-level')?.value || 90;
+    let totalDist = 0, totalUsed = 0, totalCost = 0;
 
-    let tank = 90;
-    let totalKm = 0;
-    let totalUsed = 0;
-    let totalCost = 0;
-
-    stops.forEach(stop => {
-        const km = +stop.querySelector('.pe-km').value || 0;
-        const used = (km / 100) * CONS_PETROL;
-        totalKm += km;
+    document.querySelectorAll('#petrol-stops-container .petrol-dist').forEach((distInput, i) => {
+        const dist = +distInput.value || 0;
+        const used = (dist / 100) * CONS_PETROL;
+        totalDist += dist;
         totalUsed += used;
 
-        const addedL = +stop.querySelector('.pe-l')?.value || 0;
-        const price  = +stop.querySelector('.pe-eur')?.value || 1.50;
-        if (addedL > 0) {
-            totalCost += addedL * price;
-            tank += (addedL / 50) * 100;
+        if (i < stops.length) {
+            const stop = stops[i];
+            const added = +stop.querySelector('.petrol-added')?.value || 0;
+            const price = +stop.querySelector('.petrol-price')?.value || 1.50;
+            totalCost += added * price;
+            level = Math.min(100, level - (used / TANK_LITERS * 100) + (added / TANK_LITERS * 100));
         }
-        tank -= (used / 50) * 100;
     });
 
-    return {km: totalKm, used: totalUsed, cost: totalCost};
+    document.getElementById('petrol-total-dist').textContent = totalDist;
+    document.getElementById('petrol-total-used').textContent = totalUsed.toFixed(1);
+    document.getElementById('petrol-total-cost').textContent = totalCost.toFixed(2);
 }
 
-
+// Unified update trigger
 function updateAllTrips() {
-    // EV
-    const ev = calcEv();
-    document.getElementById('ev-total-km').textContent = ev.km;
-    document.getElementById('ev-used').textContent     = ev.used.toFixed(1);
-    document.getElementById('ev-cost').textContent     = ev.cost.toFixed(2);
-
-    // Diesel
-    const di = calcDiesel();
-    document.getElementById('diesel-total-km').textContent = di.km;
-    document.getElementById('diesel-used').textContent     = di.used.toFixed(1);
-    document.getElementById('diesel-cost').textContent     = di.cost.toFixed(2);
-
-    // Petrol
-    const pe = calcPetrol();
-    document.getElementById('petrol-total-km').textContent = pe.km;
-    document.getElementById('petrol-used').textContent     = pe.used.toFixed(1);
-    document.getElementById('petrol-cost').textContent     = pe.cost.toFixed(2);
+    updateEvTrip();
+    updateDieselTrip();
+    updatePetrolTrip();
 }
 
-
-// Initial setup + listeners
+// Listen to all changes
 document.addEventListener('input', e => {
-    if (e.target.matches('input[type="number"]')) {
+    if (e.target.type === 'number') {
         updateAllTrips();
     }
 });
 
-// Add at least one realistic first stop for each
-addEvStop();
-addDieselStop();
-addPetrolStop();
-
-// First calculation
+// Initial calculation
 updateAllTrips();
 </script>
 </body>
